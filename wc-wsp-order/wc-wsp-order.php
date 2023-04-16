@@ -17,14 +17,31 @@ function mostrar_lista_pedidos_admin_page() {
     );
 }
 
+// Generar el formulario HTML de búsqueda
+function generar_formulario_busqueda() {
+    $search = isset( $_GET['search'] ) ? sanitize_text_field( $_GET['search'] ) : '';
+    $formulario = '<form method="get" action="?page=mi-plugin">';
+    $formulario .= '<input type="hidden" name="page" value="mi-plugin" />';
+    $formulario .= '<input type="text" name="search" value="' . esc_attr( $search ) . '" placeholder="Buscar por Nro. de Pedido" />';
+    $formulario .= '<input type="submit" value="Buscar" class="button" />';
+    $formulario .= '</form>';
+    return $formulario;
+}
+
 // Callback para renderizar el contenido de la página de administración
 function mostrar_lista_pedidos_admin_page_callback() {
     // Obtén la lista de pedidos
     $lista_pedidos = obtener_lista_pedidos();
 
+    // Obtener el formulario de búsqueda y almacenarlo en una variable
+    $formulario_busqueda = generar_formulario_busqueda();
+
+
     // Muestra la lista de pedidos en el área de administración
     echo '<div class="wrap">';
     echo '<h1>Lista de Pedidos</h1>';
+    // Imprimir el formulario de búsqueda
+    echo $formulario_busqueda;
     echo $lista_pedidos;
     echo '</div>';
 }
@@ -33,8 +50,18 @@ function mostrar_lista_pedidos_admin_page_callback() {
 function obtener_lista_pedidos() {
     // Comprueba si WooCommerce está activo
     if (class_exists('WooCommerce')) {
-        // Obtiene los pedidos de WooCommerce
-        $pedidos = wc_get_orders(array('limit' => -1));
+        // Obtener el valor del número de pedido para buscar
+        $search = isset( $_GET['search'] ) ? sanitize_text_field( $_GET['search'] ) : '';
+
+        // Obtener los pedidos que coinciden con el número de pedido buscado
+        $args = array(
+            'numberposts' => -1,
+            'meta_key'    => '_order_key', // Utilizar _order_key como meta_key para el número de pedido
+            'meta_value'  => $search,
+            'post_type'   => 'shop_order',
+            'post_status' => 'any',
+        );
+        $pedidos = wc_get_orders( $args );
 
 
         // Configurar la paginación
