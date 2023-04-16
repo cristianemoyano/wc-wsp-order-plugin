@@ -22,7 +22,7 @@ function generar_formulario_busqueda() {
     $search = isset( $_GET['search'] ) ? sanitize_text_field( $_GET['search'] ) : '';
     $formulario = '<form method="get" action="?page=wc-wsp-order">';
     $formulario .= '<input type="hidden" name="page" value="wc-wsp-order" />';
-    $formulario .= '<input type="text" name="search" value="' . esc_attr( $search ) . '" placeholder="Buscar por Nro. de Pedido" />';
+    $formulario .= '<input type="number" name="search" value="' . esc_attr( $search ) . '" placeholder="Buscar por Nro. de Pedido" />';
     $formulario .= '<input type="submit" value="Buscar" class="button" />';
     $formulario .= '</form>';
     return $formulario;
@@ -46,6 +46,8 @@ function mostrar_lista_pedidos_admin_page_callback() {
     echo '</div>';
 }
 
+
+
 // Función para obtener la lista de pedidos
 function obtener_lista_pedidos() {
     // Comprueba si WooCommerce está activo
@@ -55,11 +57,7 @@ function obtener_lista_pedidos() {
 
         // Obtener los pedidos que coinciden con el número de pedido buscado
         $args = array(
-            'numberposts' => -1,
-            'meta_key'    => '_order_key', // Utilizar _order_key como meta_key para el número de pedido
-            'meta_value'  => $search,
-            'post_type'   => 'shop_order',
-            'post_status' => 'any',
+            'limit' => -1,
         );
         $pedidos = wc_get_orders( $args );
 
@@ -84,6 +82,7 @@ function obtener_lista_pedidos() {
         $tabla .= '<th class="manage-column">Nro. de Pedido</th>';
         $tabla .= '<th class="manage-column">Dirección</th>';
         $tabla .= '<th class="manage-column">Nombre del Cliente</th>';
+        $tabla .= '<th class="manage-column">Empresa</th>';
         $tabla .= '<th class="manage-column">Estado del Pedido</th>'; // Nueva columna para el estado del pedido
         // ... más columnas si es necesario ...
         $tabla .= '</tr>';
@@ -94,14 +93,21 @@ function obtener_lista_pedidos() {
             // Obtiene el número de pedido, dirección y nombre del cliente
             $numero_pedido = $pedido->get_order_number();
             $direccion_pedido = $pedido->get_formatted_billing_address();
+
             $nombre_cliente = $pedido->get_billing_first_name() . ' ' . $pedido->get_billing_last_name();
+
+            $nombre_empresa = $pedido->get_billing_company();
+
+            $formatted_billing_address = str_replace( $nombre_cliente,"", $direccion_pedido );
+            $formatted_billing_address = str_replace( $nombre_empresa,"", $formatted_billing_address );
             // Obtener el estado del pedido utilizando la función wc_get_order_status_name()
             $estado_pedido = wc_get_order_status_name( $pedido->get_status() );
 
             $tabla .= '<tr>';
             $tabla .= '<td class="column-columnname">' . $numero_pedido . '</td>';
-            $tabla .= '<td class="column-columnname">' . $direccion_pedido . '</td>';
+            $tabla .= '<td class="column-columnname">' . $formatted_billing_address . '</td>';
             $tabla .= '<td class="column-columnname">' . $nombre_cliente . '</td>';
+            $tabla .= '<td class="column-columnname">' . $nombre_empresa . '</td>';
             $tabla .= '<td class="column-columnname">' . $estado_pedido . '</td>'; // Valor del estado del pedido
             $tabla .= '</tr>';
         }
