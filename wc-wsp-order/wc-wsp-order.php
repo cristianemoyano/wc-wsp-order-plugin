@@ -36,8 +36,17 @@ function obtener_lista_pedidos() {
         // Obtiene los pedidos de WooCommerce
         $pedidos = wc_get_orders(array('limit' => -1));
 
-        // Crea una lista con la información de los pedidos
-        $lista_pedidos = '<ul>';
+        // Inicio de la tabla
+        $tabla = '<table class="wp-list-table widefat fixed striped">';
+        $tabla .= '<thead>';
+        $tabla .= '<tr>';
+        $tabla .= '<th class="manage-column">Nro. de Pedido</th>';
+        $tabla .= '<th class="manage-column">Dirección</th>';
+        $tabla .= '<th class="manage-column">Nombre del Cliente</th>';
+        // ... más columnas si es necesario ...
+        $tabla .= '</tr>';
+        $tabla .= '</thead>';
+        $tabla .= '<tbody>';
 
         foreach ($pedidos as $pedido) {
             // Obtiene el número de pedido, dirección y nombre del cliente
@@ -45,15 +54,18 @@ function obtener_lista_pedidos() {
             $direccion_pedido = $pedido->get_formatted_billing_address();
             $nombre_cliente = $pedido->get_billing_first_name() . ' ' . $pedido->get_billing_last_name();
 
-            // Agrega la información del pedido a la lista
-            $lista_pedidos .= '<li><strong>Número de pedido:</strong> ' . $numero_pedido . '<br>';
-            $lista_pedidos .= '<strong>Dirección:</strong> ' . $direccion_pedido . '<br>';
-            $lista_pedidos .= '<strong>Nombre del cliente:</strong> ' . $nombre_cliente . '</li>';
+            $tabla .= '<tr>';
+            $tabla .= '<td class="column-columnname">' . $numero_pedido . '</td>';
+            $tabla .= '<td class="column-columnname">' . $direccion_pedido . '</td>';
+            $tabla .= '<td class="column-columnname">' . $nombre_cliente . '</td>';
+            $tabla .= '</tr>';
         }
 
-        $lista_pedidos .= '</ul>';
+        // Cierre de la tabla
+        $tabla .= '</tbody>';
+        $tabla .= '</table>';
 
-        return $lista_pedidos;
+        return $tabla;
     } else {
         return 'WooCommerce no está activo.';
     }
