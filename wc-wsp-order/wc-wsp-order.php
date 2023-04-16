@@ -6,6 +6,22 @@ Description: Plugin personalizado para listar pedidos de WooCommerce y generar l
 Author: Cristian Moyano
 */
 
+
+function wc_wsp_order_enqueue_admin_script() {
+    wp_enqueue_script( 'wp-wsp-order-script', plugin_dir_url( __FILE__ ) . '/assets/js/main.js', array(), '1.0' );
+}
+// Cargar script
+add_action('admin_enqueue_scripts', 'wc_wsp_order_enqueue_admin_script');
+
+function wc_wsp_order_enqueue_styles() {
+    // Registrar el estilo
+    wp_register_style('wc_wsp_orde-style', plugins_url('/assets/css/main.css', __FILE__));
+    // Encolar el estilo
+    wp_enqueue_style('wc_wsp_orde-style');
+}
+add_action('admin_enqueue_scripts', 'wc_wsp_order_enqueue_styles');
+
+
 // Agrega una página de administración para mostrar la lista de pedidos
 function mostrar_lista_pedidos_admin_page() {
     add_menu_page(
@@ -28,24 +44,28 @@ function generar_formulario_busqueda() {
     return $formulario;
 }
 
+function generar_filter_input() {
+    $input = '<div class="search"><input type="text" id="search" onkeyup="filterTable()"  placeholder="Buscar por Nro. de Pedido" /></div>';
+    return $input;
+}
+
 // Callback para renderizar el contenido de la página de administración
 function mostrar_lista_pedidos_admin_page_callback() {
     // Obtén la lista de pedidos
     $lista_pedidos = obtener_lista_pedidos();
-
-    // Obtener el formulario de búsqueda y almacenarlo en una variable
-    $formulario_busqueda = generar_formulario_busqueda();
-
+    $search = generar_filter_input();
 
     // Muestra la lista de pedidos en el área de administración
     echo '<div class="wrap">';
     echo '<h1>Lista de Pedidos</h1>';
+
+    echo $search;
     // Imprimir el formulario de búsqueda
     echo $formulario_busqueda;
     echo $lista_pedidos;
+
     echo '</div>';
 }
-
 
 
 // Función para obtener la lista de pedidos
@@ -63,7 +83,7 @@ function obtener_lista_pedidos() {
 
 
         // Configurar la paginación
-        $pedidos_por_pagina = 10; // Número de pedidos por página
+        $pedidos_por_pagina = 50; // Número de pedidos por página
         $pagina_actual = isset($_GET['pagina']) ? max(1, intval($_GET['pagina'])) : 1; // Obtener el número de página actual
         $total_pedidos = count($pedidos); // Obtener el total de pedidos
         $total_paginas = ceil($total_pedidos / $pedidos_por_pagina); // Calcular el total de páginas
@@ -76,15 +96,28 @@ function obtener_lista_pedidos() {
         $pedidos_pagina = array_slice($pedidos, $indice_inicial, $pedidos_por_pagina);
 
         // Inicio de la tabla
-        $tabla = '<table class="wp-list-table widefat fixed striped">';
+        $tabla = paginate_links(array(
+            'base' => add_query_arg('pagina', '%#%'),
+            'format' => '',
+            'prev_text' => '&laquo;',
+            'next_text' => '&raquo;',
+            'total' => $total_paginas,
+            'current' => $pagina_actual,
+            'show_all' => false,
+            'end_size' => 1,
+            'mid_size' => 2,
+        ));
+
+        $tabla .= '<table id="pedidos-table" class="wp-list-table widefat fixed striped pedidos">';
         $tabla .= '<thead>';
         $tabla .= '<tr>';
-        $tabla .= '<th class="manage-column">Nro. de Pedido</th>';
-        $tabla .= '<th class="manage-column">Dirección</th>';
-        $tabla .= '<th class="manage-column">Nombre del Cliente</th>';
-        $tabla .= '<th class="manage-column">Empresa</th>';
-        $tabla .= '<th class="manage-column">Estado del Pedido</th>'; // Nueva columna para el estado del pedido
-        // ... más columnas si es necesario ...
+        $tabla .= '<th class="manage-pedido">Nro. de Pedido</th>';
+        $tabla .= '<th class="manage-direccion">Dirección</th>';
+        $tabla .= '<th class="manage-cliente">Nombre del Cliente</th>';
+        $tabla .= '<th class="manage-empresa">Empresa</th>';
+        $tabla .= '<th class="manage-estado">Estado del Pedido</th>';
+        $tabla .= '<th class="manage-link">Link</th>';
+        $tabla .= '<th class="manage-msg">Mensaje</th>';
         $tabla .= '</tr>';
         $tabla .= '</thead>';
         $tabla .= '<tbody>';
@@ -97,18 +130,24 @@ function obtener_lista_pedidos() {
             $nombre_cliente = $pedido->get_billing_first_name() . ' ' . $pedido->get_billing_last_name();
 
             $nombre_empresa = $pedido->get_billing_company();
-
+            
+            // Remover el nombre del cliente
             $formatted_billing_address = str_replace( $nombre_cliente,"", $direccion_pedido );
+            // Remover el nombre de la empresa
             $formatted_billing_address = str_replace( $nombre_empresa,"", $formatted_billing_address );
-            // Obtener el estado del pedido utilizando la función wc_get_order_status_name()
-            $estado_pedido = wc_get_order_status_name( $pedido->get_status() );
 
-            $tabla .= '<tr>';
-            $tabla .= '<td class="column-columnname">' . $numero_pedido . '</td>';
-            $tabla .= '<td class="column-columnname">' . $formatted_billing_address . '</td>';
-            $tabla .= '<td class="column-columnname">' . $nombre_cliente . '</td>';
-            $tabla .= '<td class="column-columnname">' . $nombre_empresa . '</td>';
-            $tabla .= '<td class="column-columnname">' . $estado_pedido . '</td>'; // Valor del estado del pedido
+            // Obtener el estado del pedido utilizando la función wc_get_order_status_name()
+            $raw_status = $pedido->get_status();
+            $estado_pedido = wc_get_order_status_name( $raw_status );
+
+            $tabla .= '<tr id="'.$numero_pedido.'">';
+            $tabla .= '<td class="column-nro-pedido">' . $numero_pedido . '</td>';
+            $tabla .= '<td class="column-direccion">' . $formatted_billing_address . '</td>';
+            $tabla .= '<td class="column-cliente">' . $nombre_cliente . '</td>';
+            $tabla .= '<td class="column-empresa">' . $nombre_empresa . '</td>';
+            $tabla .= '<td class="column-estado"><mark class="order-status status-'.$raw_status.'"><span>' . $estado_pedido . '</span></mark></td>';
+            $tabla .= '<td class="column-link"></td>';
+            $tabla .= '<td class="column-msg"></td>';
             $tabla .= '</tr>';
         }
 
