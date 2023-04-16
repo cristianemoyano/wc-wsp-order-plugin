@@ -20,8 +20,8 @@ function mostrar_lista_pedidos_admin_page() {
 // Generar el formulario HTML de búsqueda
 function generar_formulario_busqueda() {
     $search = isset( $_GET['search'] ) ? sanitize_text_field( $_GET['search'] ) : '';
-    $formulario = '<form method="get" action="?page=mi-plugin">';
-    $formulario .= '<input type="hidden" name="page" value="mi-plugin" />';
+    $formulario = '<form method="get" action="?page=wc-wsp-order">';
+    $formulario .= '<input type="hidden" name="page" value="wc-wsp-order" />';
     $formulario .= '<input type="text" name="search" value="' . esc_attr( $search ) . '" placeholder="Buscar por Nro. de Pedido" />';
     $formulario .= '<input type="submit" value="Buscar" class="button" />';
     $formulario .= '</form>';
