@@ -108,7 +108,7 @@ function obtener_lista_pedidos() {
             'mid_size' => 2,
         ));
 
-        $tabla .= '<table id="pedidos-table" class="wp-list-table widefat fixed striped pedidos">';
+        $tabla .= '<table id="pedidos-table" class="wp-list-table striped table-responsive pedidos">';
         $tabla .= '<thead>';
         $tabla .= '<tr>';
         $tabla .= '<th class="manage-pedido">Nro. de Pedido</th>';
@@ -116,6 +116,7 @@ function obtener_lista_pedidos() {
         $tabla .= '<th class="manage-cliente">Nombre del Cliente</th>';
         $tabla .= '<th class="manage-empresa">Empresa</th>';
         $tabla .= '<th class="manage-estado">Estado del Pedido</th>';
+        $tabla .= '<th class="manage-total">Total</th>';
         $tabla .= '<th class="manage-link">Link</th>';
         $tabla .= '<th class="manage-msg">Mensaje</th>';
         $tabla .= '</tr>';
@@ -130,6 +131,8 @@ function obtener_lista_pedidos() {
             $nombre_cliente = $pedido->get_billing_first_name() . ' ' . $pedido->get_billing_last_name();
 
             $nombre_empresa = $pedido->get_billing_company();
+
+            $total = $pedido->get_total();
             
             // Remover el nombre del cliente
             $formatted_billing_address = str_replace( $nombre_cliente,"", $direccion_pedido );
@@ -146,6 +149,7 @@ function obtener_lista_pedidos() {
             $tabla .= '<td class="column-cliente">' . $nombre_cliente . '</td>';
             $tabla .= '<td class="column-empresa">' . $nombre_empresa . '</td>';
             $tabla .= '<td class="column-estado"><mark class="order-status status-'.$raw_status.'"><span>' . $estado_pedido . '</span></mark></td>';
+            $tabla .= '<td class="column-total">'.wc_price($total).'</td>';
             $tabla .= '<td class="column-link"></td>';
             $tabla .= '<td class="column-msg"></td>';
             $tabla .= '</tr>';

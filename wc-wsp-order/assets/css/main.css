@@ -40,3 +40,6 @@
 .search {
     padding: 10px;
 }
+.table-responsive {
+    overflow-x: auto;
+}
