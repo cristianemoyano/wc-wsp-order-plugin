@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Whatsapp Orders
-Version: 1.0.0
+Version: 1.0.1
 Description: Plugin personalizado para listar pedidos de WooCommerce y generar links de Whatsapp
 Author: Cristian Moyano
 */
@@ -36,6 +36,20 @@ function obtener_lista_pedidos() {
         // Obtiene los pedidos de WooCommerce
         $pedidos = wc_get_orders(array('limit' => -1));
 
+
+        // Configurar la paginación
+        $pedidos_por_pagina = 10; // Número de pedidos por página
+        $pagina_actual = isset($_GET['pagina']) ? max(1, intval($_GET['pagina'])) : 1; // Obtener el número de página actual
+        $total_pedidos = count($pedidos); // Obtener el total de pedidos
+        $total_paginas = ceil($total_pedidos / $pedidos_por_pagina); // Calcular el total de páginas
+
+        // Calcular el índice inicial y final de los pedidos para la página actual
+        $indice_inicial = ($pagina_actual - 1) * $pedidos_por_pagina;
+        $indice_final = $indice_inicial + $pedidos_por_pagina - 1;
+
+        // Filtrar los pedidos para la página actual
+        $pedidos_pagina = array_slice($pedidos, $indice_inicial, $pedidos_por_pagina);
+
         // Inicio de la tabla
         $tabla = '<table class="wp-list-table widefat fixed striped">';
         $tabla .= '<thead>';
@@ -43,27 +57,48 @@ function obtener_lista_pedidos() {
         $tabla .= '<th class="manage-column">Nro. de Pedido</th>';
         $tabla .= '<th class="manage-column">Dirección</th>';
         $tabla .= '<th class="manage-column">Nombre del Cliente</th>';
+        $tabla .= '<th class="manage-column">Estado del Pedido</th>'; // Nueva columna para el estado del pedido
         // ... más columnas si es necesario ...
         $tabla .= '</tr>';
         $tabla .= '</thead>';
         $tabla .= '<tbody>';
 
-        foreach ($pedidos as $pedido) {
+        foreach ($pedidos_pagina as $pedido) {
             // Obtiene el número de pedido, dirección y nombre del cliente
             $numero_pedido = $pedido->get_order_number();
             $direccion_pedido = $pedido->get_formatted_billing_address();
             $nombre_cliente = $pedido->get_billing_first_name() . ' ' . $pedido->get_billing_last_name();
+            // Obtener el estado del pedido utilizando la función wc_get_order_status_name()
+            $estado_pedido = wc_get_order_status_name( $pedido->get_status() );
 
             $tabla .= '<tr>';
             $tabla .= '<td class="column-columnname">' . $numero_pedido . '</td>';
             $tabla .= '<td class="column-columnname">' . $direccion_pedido . '</td>';
             $tabla .= '<td class="column-columnname">' . $nombre_cliente . '</td>';
+            $tabla .= '<td class="column-columnname">' . $estado_pedido . '</td>'; // Valor del estado del pedido
             $tabla .= '</tr>';
         }
 
         // Cierre de la tabla
         $tabla .= '</tbody>';
         $tabla .= '</table>';
+
+        // Mostrar la paginación debajo de la tabla
+        $tabla .= '<div class="tablenav">';
+        $tabla .= '<div class="tablenav-pages">';
+        $tabla .= paginate_links(array(
+            'base' => add_query_arg('pagina', '%#%'),
+            'format' => '',
+            'prev_text' => '&laquo;',
+            'next_text' => '&raquo;',
+            'total' => $total_paginas,
+            'current' => $pagina_actual,
+            'show_all' => false,
+            'end_size' => 1,
+            'mid_size' => 2,
+        ));
+        $tabla .= '</div>';
+        $tabla .= '</div>';
 
         return $tabla;
     } else {
