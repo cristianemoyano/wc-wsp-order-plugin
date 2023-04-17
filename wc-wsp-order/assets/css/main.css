@@ -9,21 +9,25 @@
     color: #ffffff;
     background-color: #ff9500;
 }
+
 /* COMPLETED */
 .order-status.status-completed {
     color: #ffffff;
     background-color: #9fbece;
 }
+
 /* PREPARING */
 .order-status.status-preparing {
     color: #ffffff;
     background-color: #fff700;
 }
+
 /* PROCESSING */
 .order-status.status-processing {
     color: #ffffff;
     background-color: #ff0000;
 }
+
 .order-status {
     display: -webkit-inline-box;
     display: inline-flex;
@@ -31,15 +35,74 @@
     color: #777;
     background: #e5e5e5;
     border-radius: 4px;
-    border-bottom: 1px solid rgba(0,0,0,.05);
+    border-bottom: 1px solid rgba(0, 0, 0, .05);
     margin: -0.25em 0;
-    cursor: inherit!important;
+    cursor: inherit !important;
     white-space: nowrap;
     max-width: 100%;
 }
+
 .search {
     padding: 10px;
+    width: 90%;
 }
+
+.table-responsive {
+    overflow-x: auto !important;
+}
+
+
+
+
+table.fixed {
+    table-layout: fixed;
+}
+
 .table-responsive {
     overflow-x: auto;
+}
+
+.widefat {
+    border-spacing: 0;
+    width: 100%;
+    clear: both;
+    margin: 0;
+}
+
+table {
+    display: table;
+    border-collapse: collapse;
+    width: 100%;
+    box-sizing: border-box;
+    text-indent: initial;
+    border-spacing: 2px;
+    border-color: gray;
+}
+
+th,
+td {
+    padding: 0.25rem;
+    text-align: left;
+    border: 1px solid #ccc;
+}
+
+tbody tr:nth-child(odd) {
+    background: #eee;
+}
+
+
+.tablenav .page-numbers {
+    display: inline-block !important;
+    vertical-align: baseline !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    margin: 0 !important;
+    padding: 0 4px !important;
+    font-size: 16px !important;
+    line-height: 1.625 !important;
+    text-align: center !important;
+    color: #2271b1 !important;
+    border-color: #2271b1 !important;
+    background: #f6f7f7 !important;
+    vertical-align: top !important;
 }

@@ -96,7 +96,9 @@ function obtener_lista_pedidos() {
         $pedidos_pagina = array_slice($pedidos, $indice_inicial, $pedidos_por_pagina);
 
         // Inicio de la tabla
-        $tabla = paginate_links(array(
+        $tabla = '<div class="tablenav">';
+        $tabla .= '<div class="tablenav-pages">';
+        $tabla .= paginate_links(array(
             'base' => add_query_arg('pagina', '%#%'),
             'format' => '',
             'prev_text' => '&laquo;',
@@ -107,8 +109,10 @@ function obtener_lista_pedidos() {
             'end_size' => 1,
             'mid_size' => 2,
         ));
+        $tabla .= '</div>';
+        $tabla .= '</div>';
 
-        $tabla .= '<table id="pedidos-table" class="wp-list-table striped table-responsive pedidos">';
+        $tabla .= '<table id="pedidos-table" class="wp-list-table widefat fixed striped table-responsive pedidos">';
         $tabla .= '<thead>';
         $tabla .= '<tr>';
         $tabla .= '<th class="manage-pedido">Nro. de Pedido</th>';
