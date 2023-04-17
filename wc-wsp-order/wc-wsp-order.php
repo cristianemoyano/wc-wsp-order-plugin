@@ -112,7 +112,8 @@ function obtener_lista_pedidos() {
         $tabla .= '</div>';
         $tabla .= '</div>';
 
-        $tabla .= '<table id="pedidos-table" class="wp-list-table widefat fixed striped table-responsive pedidos">';
+        $tabla = '<div class="table-container wrap">';
+        $tabla .= '<table id="pedidos-table" class="tabla pedidos">';
         $tabla .= '<thead>';
         $tabla .= '<tr>';
         $tabla .= '<th class="manage-pedido">Nro. de Pedido</th>';
@@ -162,6 +163,7 @@ function obtener_lista_pedidos() {
         // Cierre de la tabla
         $tabla .= '</tbody>';
         $tabla .= '</table>';
+        $tabla .= '</div>';
 
         // Mostrar la paginación debajo de la tabla
         $tabla .= '<div class="tablenav">';

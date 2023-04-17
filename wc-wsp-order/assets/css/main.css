@@ -42,54 +42,62 @@
     max-width: 100%;
 }
 
-.search {
-    padding: 10px;
+.search input {
+    padding: 5px;
     width: 90%;
 }
 
-.table-responsive {
-    overflow-x: auto !important;
-}
 
+/* TABLE */
+.table-container {
+    overflow-x: auto; /* Agrega scroll horizontal si el contenido es demasiado ancho */
+    width: 90%;
+  }
 
-
-
-table.fixed {
-    table-layout: fixed;
-}
-
-.table-responsive {
-    overflow-x: auto;
-}
-
-.widefat {
-    border-spacing: 0;
+.tabla {
     width: 100%;
-    clear: both;
-    margin: 0;
-}
-
-table {
-    display: table;
     border-collapse: collapse;
-    width: 100%;
-    box-sizing: border-box;
-    text-indent: initial;
-    border-spacing: 2px;
-    border-color: gray;
-}
+    overflow-x: auto;
+    background-color: #e2e2e2;
+  }
+  
+  /* Estilo para las filas impares */
+  .tabla tr:nth-child(odd) {
+    background-color: #f2f2f2;
+  }
+  
+  /* Estilo para las celdas */
+  .tabla th, .tabla td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
 
-th,
-td {
+  th, td {
     padding: 0.25rem;
     text-align: left;
     border: 1px solid #ccc;
-}
-
-tbody tr:nth-child(odd) {
+  }
+  tbody tr:nth-child(odd) {
     background: #eee;
-}
+  }
+  
+  /* Estilo para las celdas de encabezado */
+  .tabla th {
+    background-color: #e2e2e2;
+  }
+  
+  /* Estilo para la tabla en dispositivos móviles */
+  @media screen and (max-width: 600px) {
+    .tabla {
+      font-size: 14px;
+    }
+    .tabla th, .tabla td {
+      padding: 5px;
+    }
+  }
 
+/* pagination */
 
 .tablenav .page-numbers {
     display: inline-block !important;
