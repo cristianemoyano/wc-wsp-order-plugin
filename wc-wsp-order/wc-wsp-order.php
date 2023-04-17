@@ -96,7 +96,9 @@ function obtener_lista_pedidos() {
         $pedidos_pagina = array_slice($pedidos, $indice_inicial, $pedidos_por_pagina);
 
         // Inicio de la tabla
-        $tabla = '<div class="tablenav">';
+        $tabla = '';
+
+        $tabla .= '<div class="tablenav">';
         $tabla .= '<div class="tablenav-pages">';
         $tabla .= paginate_links(array(
             'base' => add_query_arg('pagina', '%#%'),
@@ -112,18 +114,18 @@ function obtener_lista_pedidos() {
         $tabla .= '</div>';
         $tabla .= '</div>';
 
-        $tabla = '<div class="table-container wrap">';
-        $tabla .= '<table id="pedidos-table" class="tabla pedidos">';
+        $tabla .= '<div class="table-container wrap ">';
+        $tabla .= '<table id="pedidos-table" class="wp-list-table widefat fixed striped table-view-list tabla pedidos">';
         $tabla .= '<thead>';
         $tabla .= '<tr>';
-        $tabla .= '<th class="manage-pedido">Nro. de Pedido</th>';
+        $tabla .= '<th class="manage-msg column-primary">Mensaje</th>';
+        $tabla .= '<th class="manage-pedido sortable desc">Nro. de Pedido</th>';
         $tabla .= '<th class="manage-direccion">Dirección</th>';
         $tabla .= '<th class="manage-cliente">Nombre del Cliente</th>';
         $tabla .= '<th class="manage-empresa">Empresa</th>';
         $tabla .= '<th class="manage-estado">Estado del Pedido</th>';
         $tabla .= '<th class="manage-total">Total</th>';
         $tabla .= '<th class="manage-link">Link</th>';
-        $tabla .= '<th class="manage-msg">Mensaje</th>';
         $tabla .= '</tr>';
         $tabla .= '</thead>';
         $tabla .= '<tbody>';
@@ -149,6 +151,7 @@ function obtener_lista_pedidos() {
             $estado_pedido = wc_get_order_status_name( $raw_status );
 
             $tabla .= '<tr id="'.$numero_pedido.'">';
+            $tabla .= '<td class="column-msg"></td>';
             $tabla .= '<td class="column-nro-pedido">' . $numero_pedido . '</td>';
             $tabla .= '<td class="column-direccion">' . $formatted_billing_address . '</td>';
             $tabla .= '<td class="column-cliente">' . $nombre_cliente . '</td>';
@@ -156,7 +159,6 @@ function obtener_lista_pedidos() {
             $tabla .= '<td class="column-estado"><mark class="order-status status-'.$raw_status.'"><span>' . $estado_pedido . '</span></mark></td>';
             $tabla .= '<td class="column-total">'.wc_price($total).'</td>';
             $tabla .= '<td class="column-link"></td>';
-            $tabla .= '<td class="column-msg"></td>';
             $tabla .= '</tr>';
         }
 
