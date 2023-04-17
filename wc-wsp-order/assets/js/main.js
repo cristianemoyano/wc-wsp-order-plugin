@@ -28,8 +28,7 @@ function process_cell() {
 
   // Itera sobre todas las celdas de contenido
   cellDireccion.forEach(function (cellContenido) {
-    // Obtén la celda donde se generará el enlace de Google Maps
-    let cellEnlace = cellContenido.closest('tr').querySelector('td.column-link');
+
 
     // Copia el contenido de la celda
     let contenido = cellContenido.innerHTML;
@@ -40,18 +39,8 @@ function process_cell() {
     // Reemplaza espacios por "+" y sacar los ultimos 5 caracteres
     contenido = contenido.replace(/\s+/g, '+').slice(0, -5);;
 
-    // Genera el enlace de Google Maps
-    let enlace = 'https://www.google.com/maps/place/' + contenido + '/';
-
-    // Crea un elemento de enlace (<a>) con el enlace generado como atributo href
-    let link = document.createElement('a');
-    link.href = enlace;
-    link.target = '_blank';
-    link.textContent = 'Link de Google Maps';
-    // Agrega el enlace como contenido de la celda de enlace
-    cellEnlace.innerHTML = link.outerHTML;
-
     // Mensaje HTML
+    let enlace = cellContenido.closest('tr').querySelector('td.column-web').innerText;
     let saltoLinea = "<br>";
     let nroPedido = cellContenido.closest('tr').querySelector('td.column-nro-pedido').innerText;
     let nombreCliente = cellContenido.closest('tr').querySelector('td.column-cliente').innerText;

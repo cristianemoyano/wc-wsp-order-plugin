@@ -125,7 +125,7 @@ function obtener_lista_pedidos() {
         $tabla .= '<th class="manage-empresa">Empresa</th>';
         $tabla .= '<th class="manage-estado">Estado del Pedido</th>';
         $tabla .= '<th class="manage-total">Total</th>';
-        $tabla .= '<th class="manage-link">Link</th>';
+        $tabla .= '<th class="manage-web">Link de Google</th>';
         $tabla .= '</tr>';
         $tabla .= '</thead>';
         $tabla .= '<tbody>';
@@ -140,6 +140,10 @@ function obtener_lista_pedidos() {
             $nombre_empresa = $pedido->get_billing_company();
 
             $total = $pedido->get_total();
+
+            // Obtener el valor del campo "web" del perfil de usuario
+            $customer_id = $pedido->get_customer_id();
+            $web = get_user_meta($customer_id, 'facebook', true);
             
             // Remover el nombre del cliente
             $formatted_billing_address = str_replace( $nombre_cliente,"", $direccion_pedido );
@@ -158,7 +162,7 @@ function obtener_lista_pedidos() {
             $tabla .= '<td class="column-empresa">' . $nombre_empresa . '</td>';
             $tabla .= '<td class="column-estado"><mark class="order-status status-'.$raw_status.'"><span>' . $estado_pedido . '</span></mark></td>';
             $tabla .= '<td class="column-total">'.wc_price($total).'</td>';
-            $tabla .= '<td class="column-link"></td>';
+            $tabla .= '<td class="column-web"><a href="'.$web.'">'.$web.'</a></td>';
             $tabla .= '</tr>';
         }
 
